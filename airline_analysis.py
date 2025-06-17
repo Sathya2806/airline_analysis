@@ -66,3 +66,64 @@ sns.heatmap(pivot_table, annot=True, cmap="coolwarm", fmt=".1f")
 plt.title("Average Delay per Route (in minutes)")
 plt.show()
 conn.close()
+import pandas as pd
+import sqlite3
+
+# Connect to the existing database
+conn = sqlite3.connect('flights.db')
+
+# Query: Number of delayed flights (arr_delay > 0) by carrier
+query_delayed_by_carrier = """
+SELECT 
+  carrier,
+  COUNT(*) AS delayed_flights_count,
+  AVG(arr_delay) AS avg_delay_for_delayed_flights
+FROM flights
+WHERE arr_delay > 0
+GROUP BY carrier
+ORDER BY delayed_flights_count DESC;
+"""
+print("Delayed Flights Stats by Carrier:")
+print(pd.read_sql_query(query_delayed_by_carrier, conn))
+print("\n")
+
+# Query: Number of cancelled flights by carrier
+query_cancelled_by_carrier = """
+SELECT 
+  carrier,
+  COUNT(*) AS cancelled_flights_count
+FROM flights
+WHERE status = 'Cancelled'
+GROUP BY carrier
+ORDER BY cancelled_flights_count DESC;
+"""
+print("Cancelled Flights by Carrier:")
+print(pd.read_sql_query(query_cancelled_by_carrier, conn))
+print("\n")
+
+# Query: Filter and show details of delayed flights (arr_delay > 0)
+query_delayed_flights_detail = """
+SELECT flight_id, carrier, origin, destination, arr_delay, status
+FROM flights
+WHERE arr_delay > 0 AND status <> 'Cancelled'
+ORDER BY arr_delay DESC
+LIMIT 20;
+"""
+print("Sample Delayed Flights (arr_delay > 0, not cancelled):")
+print(pd.read_sql_query(query_delayed_flights_detail, conn))
+print("\n")
+
+# Query: Filter and show details of cancelled flights
+query_cancelled_flights_detail = """
+SELECT flight_id, carrier, origin, destination, arr_delay, status
+FROM flights
+WHERE status = 'Cancelled'
+ORDER BY flight_id DESC
+LIMIT 20;
+"""
+print("Sample Cancelled Flights:")
+print(pd.read_sql_query(query_cancelled_flights_detail, conn))
+print("\n")
+
+conn.close()
+
