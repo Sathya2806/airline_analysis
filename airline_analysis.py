@@ -3,7 +3,7 @@ import sqlite3
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-df = pd.read_csv('/content/expanded_flight_data.csv')
+df = pd.read_csv('expanded_flight_data.csv')
 print(df.head())
 df['arr_delay'] = df['arr_delay'].fillna(0)
 df['status'] = df['status'].fillna('Unknown')
