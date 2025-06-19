@@ -127,3 +127,47 @@ print("\n")
 
 conn.close()
 
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Example data: replace with your actual counts
+statuses = ['Cancelled', 'On-time', 'Delayed']
+delta_counts = [12, 15, 8]
+united_counts = [10, 8, 6]
+american_counts = [11, 5, 5]
+
+# Bar width and positions
+bar_width = 0.25
+x = np.arange(len(statuses))
+
+# Plotting
+fig, ax = plt.subplots(dpi=120)
+rects1 = ax.bar(x - bar_width, delta_counts, bar_width, label='Delta')
+rects2 = ax.bar(x, united_counts, bar_width, label='United')
+rects3 = ax.bar(x + bar_width, american_counts, bar_width, label='American')
+
+# Labels and title
+ax.set_xlabel('Flight Status')
+ax.set_ylabel('Number of Flights')
+ax.set_title('Flight Status Distribution by Airline')
+ax.set_xticks(x)
+ax.set_xticklabels(statuses)
+ax.legend()
+
+# Annotate bars with counts
+def autolabel(rects):
+    for rect in rects:
+        height = rect.get_height()
+        ax.annotate(f'{height}',
+                    xy=(rect.get_x() + rect.get_width() / 2, height),
+                    xytext=(0, 3),  # 3 points vertical offset
+                    textcoords="offset points",
+                    ha='center', va='bottom')
+
+autolabel(rects1)
+autolabel(rects2)
+autolabel(rects3)
+
+plt.tight_layout()
+plt.show()
+
